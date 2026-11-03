@@ -1,0 +1,324 @@
+{
+  "variant": "no_duplicates",
+  "split_manifest_sha256": "e1b8a10bffe2fc3ad1f33142b9f55c9a034567f42ac32265973b1d02d8fad3ed",
+  "parameters": {
+    "normalization": "NFKC, casefold, whitespace collapse",
+    "representation": "character TF-IDF fitted only for this audit",
+    "ngram_range": [
+      3,
+      5
+    ],
+    "similarity": "cosine",
+    "similarity_threshold": 0.9,
+    "min_length": 40,
+    "min_length_ratio": 0.8,
+    "normalized_equal_pairs_excluded": true
+  },
+  "within_splits": [
+    {
+      "split": "train",
+      "records": 3619,
+      "exact_duplicate_rows": 0,
+      "normalized_duplicate_rows": 3
+    },
+    {
+      "split": "val",
+      "records": 776,
+      "exact_duplicate_rows": 0,
+      "normalized_duplicate_rows": 0
+    },
+    {
+      "split": "test",
+      "records": 776,
+      "exact_duplicate_rows": 0,
+      "normalized_duplicate_rows": 0
+    }
+  ],
+  "between_splits": [
+    {
+      "left_split": "train",
+      "right_split": "val",
+      "shared_exact_texts": 0,
+      "left_exact_overlap_rows": 0,
+      "right_exact_overlap_rows": 0,
+      "shared_normalized_texts": 3
+    },
+    {
+      "left_split": "train",
+      "right_split": "test",
+      "shared_exact_texts": 0,
+      "left_exact_overlap_rows": 0,
+      "right_exact_overlap_rows": 0,
+      "shared_normalized_texts": 6
+    },
+    {
+      "left_split": "val",
+      "right_split": "test",
+      "shared_exact_texts": 0,
+      "left_exact_overlap_rows": 0,
+      "right_exact_overlap_rows": 0,
+      "shared_normalized_texts": 0
+    }
+  ],
+  "near_duplicate_candidates": [
+    {
+      "left_id": "sms_000077",
+      "right_id": "sms_001397",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9176145217832936
+    },
+    {
+      "left_id": "sms_000334",
+      "right_id": "sms_005203",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9111244677083171
+    },
+    {
+      "left_id": "sms_000421",
+      "right_id": "sms_002831",
+      "left_split": "val",
+      "right_split": "test",
+      "similarity": 0.9957737619657057
+    },
+    {
+      "left_id": "sms_000472",
+      "right_id": "sms_003896",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9570116845237118
+    },
+    {
+      "left_id": "sms_000516",
+      "right_id": "sms_002643",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9948824708655947
+    },
+    {
+      "left_id": "sms_000805",
+      "right_id": "sms_001971",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9344825620427647
+    },
+    {
+      "left_id": "sms_000825",
+      "right_id": "sms_003621",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.936635664939833
+    },
+    {
+      "left_id": "sms_000880",
+      "right_id": "sms_001624",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.968519011979575
+    },
+    {
+      "left_id": "sms_000911",
+      "right_id": "sms_004128",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9890722884555431
+    },
+    {
+      "left_id": "sms_001023",
+      "right_id": "sms_001962",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9276299129222099
+    },
+    {
+      "left_id": "sms_001092",
+      "right_id": "sms_001599",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9074670574009905
+    },
+    {
+      "left_id": "sms_001123",
+      "right_id": "sms_003484",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.918089530027517
+    },
+    {
+      "left_id": "sms_001376",
+      "right_id": "sms_004835",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9199016067186656
+    },
+    {
+      "left_id": "sms_001424",
+      "right_id": "sms_000814",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9495021845117828
+    },
+    {
+      "left_id": "sms_001881",
+      "right_id": "sms_001624",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9826188116111102
+    },
+    {
+      "left_id": "sms_002006",
+      "right_id": "sms_001091",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9235316093933545
+    },
+    {
+      "left_id": "sms_002210",
+      "right_id": "sms_001943",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9198998409002721
+    },
+    {
+      "left_id": "sms_002313",
+      "right_id": "sms_003261",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9437080257415928
+    },
+    {
+      "left_id": "sms_002428",
+      "right_id": "sms_000336",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9937008388321357
+    },
+    {
+      "left_id": "sms_002851",
+      "right_id": "sms_002872",
+      "left_split": "val",
+      "right_split": "test",
+      "similarity": 0.9965141944186473
+    },
+    {
+      "left_id": "sms_003267",
+      "right_id": "sms_003410",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9129464461205181
+    },
+    {
+      "left_id": "sms_003267",
+      "right_id": "sms_005080",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9186055731303852
+    },
+    {
+      "left_id": "sms_003300",
+      "right_id": "sms_003003",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9525658662123387
+    },
+    {
+      "left_id": "sms_003335",
+      "right_id": "sms_003496",
+      "left_split": "val",
+      "right_split": "test",
+      "similarity": 0.9225571132481022
+    },
+    {
+      "left_id": "sms_003434",
+      "right_id": "sms_003291",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9945617363938983
+    },
+    {
+      "left_id": "sms_003861",
+      "right_id": "sms_001319",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9417426217565756
+    },
+    {
+      "left_id": "sms_004049",
+      "right_id": "sms_003223",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9017318649496273
+    },
+    {
+      "left_id": "sms_004061",
+      "right_id": "sms_002310",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9751044517062267
+    },
+    {
+      "left_id": "sms_004109",
+      "right_id": "sms_001503",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9529617063436578
+    },
+    {
+      "left_id": "sms_004313",
+      "right_id": "sms_003352",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9697708964976899
+    },
+    {
+      "left_id": "sms_004501",
+      "right_id": "sms_000824",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9569961122517382
+    },
+    {
+      "left_id": "sms_004579",
+      "right_id": "sms_005550",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9958573081400073
+    },
+    {
+      "left_id": "sms_004587",
+      "right_id": "sms_000881",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9406989864680583
+    },
+    {
+      "left_id": "sms_004902",
+      "right_id": "sms_002643",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9992038309089749
+    },
+    {
+      "left_id": "sms_005072",
+      "right_id": "sms_003621",
+      "left_split": "train",
+      "right_split": "val",
+      "similarity": 0.9327258260426159
+    },
+    {
+      "left_id": "sms_005115",
+      "right_id": "sms_000320",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9626711796396069
+    },
+    {
+      "left_id": "sms_005140",
+      "right_id": "sms_001943",
+      "left_split": "train",
+      "right_split": "test",
+      "similarity": 0.9111900797789861
+    }
+  ]
+}

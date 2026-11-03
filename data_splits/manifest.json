@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "dataset": {
+    "name": "SMS Spam Collection v.1",
+    "sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
+    "record_count": 5574,
+    "record_id": "sms_ followed by the one-based source line number, padded to six digits"
+  },
+  "split": {
+    "seed": 42,
+    "stratify": "label",
+    "fractions": {
+      "train": 0.7,
+      "val": 0.15,
+      "test": 0.15
+    },
+    "deduplication": "no_duplicates only: keep the first occurrence of each exact text"
+  },
+  "variants": {
+    "with_duplicates": {
+      "train": {
+        "record_count": 3901,
+        "class_counts": {
+          "ham": 3378,
+          "spam": 523
+        },
+        "sha256": "5618c7d36f4a66dfb9deded956ef97c368633383b73cec3a19f1cf517f0f6fd9"
+      },
+      "val": {
+        "record_count": 836,
+        "class_counts": {
+          "ham": 724,
+          "spam": 112
+        },
+        "sha256": "9ba082e79c97ae0831c5e88f4da2f1989dc33bec8380b2248fc938001b0cdb2b"
+      },
+      "test": {
+        "record_count": 837,
+        "class_counts": {
+          "ham": 725,
+          "spam": 112
+        },
+        "sha256": "ead92e6a4b4312a2e8b4a3c02245e6406e5dc873dcf42e6a401fb38d6205cffd"
+      }
+    },
+    "no_duplicates": {
+      "train": {
+        "record_count": 3619,
+        "class_counts": {
+          "ham": 3162,
+          "spam": 457
+        },
+        "sha256": "c41f193081ce9ccca9d6fb86e523913ea9a05e570196595b828d167a838a6b3f"
+      },
+      "val": {
+        "record_count": 776,
+        "class_counts": {
+          "ham": 678,
+          "spam": 98
+        },
+        "sha256": "2e40e5c38516b546af5a5d61d46b8dddc005ee7e6d86fbaf3e6827477adec1e3"
+      },
+      "test": {
+        "record_count": 776,
+        "class_counts": {
+          "ham": 678,
+          "spam": 98
+        },
+        "sha256": "f9163db20e2d3ea905d33002ec8b7f0e9113ce20d76ef2cf6224879e47cbd255"
+      }
+    }
+  }
+}
