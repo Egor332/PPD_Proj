@@ -1,0 +1,52 @@
+{
+  "run_id": "20261103T145831537575Z_1a158972",
+  "started_at_utc": "2026-11-03T14:58:31.537575+00:00",
+  "evaluation_split": "val",
+  "split_manifest_sha256": "e1b8a10bffe2fc3ad1f33142b9f55c9a034567f42ac32265973b1d02d8fad3ed",
+  "train_sha256": "5618c7d36f4a66dfb9deded956ef97c368633383b73cec3a19f1cf517f0f6fd9",
+  "validation_sha256": "9ba082e79c97ae0831c5e88f4da2f1989dc33bec8380b2248fc938001b0cdb2b",
+  "train_records": 3901,
+  "validation_records": 836,
+  "train_class_counts": {
+    "ham": 3378,
+    "spam": 523
+  },
+  "validation_class_counts": {
+    "ham": 724,
+    "spam": 112
+  },
+  "feature_count": 6890,
+  "preprocessing_summary": {
+    "train": {
+      "records": 3901,
+      "changed_records": 389,
+      "fraction_changed": 0.09971802102025122
+    },
+    "val": {
+      "records": 836,
+      "changed_records": 90,
+      "fraction_changed": 0.1076555023923445
+    }
+  },
+  "train_seconds": 0.24254677899989474,
+  "inference_seconds": 0.05710433500007639,
+  "training_scope": "fit the complete model pipeline on training text",
+  "inference_scope": "validation text to probabilities, labels and prediction table",
+  "api_cost": 0.0,
+  "environment": {
+    "python": "3.12.3",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1"
+    },
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "processor": "AMD Ryzen 5 PRO 4650U with Radeon Graphics",
+    "logical_cpu_count": 12,
+    "device": "cpu"
+  },
+  "code_sha256": "7d88a9a8874b5dace74847e2b12742319995696706faa7a615937a5fe2efdc2d",
+  "git_commit": "c9fb4c7139dc8d9b0f9bc0f8ac065919e6502fb3",
+  "git_dirty": true
+}

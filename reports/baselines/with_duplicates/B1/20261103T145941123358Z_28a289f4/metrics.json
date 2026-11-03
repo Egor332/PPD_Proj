@@ -1,0 +1,27 @@
+{
+  "f1_spam": 0.88,
+  "precision_spam": 1.0,
+  "recall_spam": 0.7857142857142857,
+  "macro_f1": 0.9318478260869565,
+  "accuracy": 0.9712918660287081,
+  "pr_auc": 0.9678722656871737,
+  "average_precision": 0.9679628436521002,
+  "tn": 724,
+  "fp": 0,
+  "fn": 24,
+  "tp": 88,
+  "confusion_matrix": [
+    [
+      724,
+      0
+    ],
+    [
+      24,
+      88
+    ]
+  ],
+  "class_labels": [
+    "ham",
+    "spam"
+  ]
+}
