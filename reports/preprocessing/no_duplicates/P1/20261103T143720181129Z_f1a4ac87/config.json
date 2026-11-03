@@ -1,0 +1,47 @@
+{
+  "model": "P1",
+  "dataset_variant": "no_duplicates",
+  "decision_rule": "p_spam >= threshold",
+  "decision_threshold": 0.5,
+  "shared_configuration": {
+    "decision_threshold": 0.5,
+    "tfidf": {
+      "analyzer": "word",
+      "ngram_range": [
+        1,
+        1
+      ],
+      "lowercase": true,
+      "strip_accents": null,
+      "preprocessor": null,
+      "tokenizer": null,
+      "token_pattern": "(?u)\\b\\w\\w+\\b",
+      "stop_words": null,
+      "min_df": 1,
+      "max_df": 1.0,
+      "max_features": null,
+      "binary": false,
+      "norm": "l2",
+      "use_idf": true,
+      "smooth_idf": true,
+      "sublinear_tf": false
+    },
+    "logistic_regression": {
+      "solver": "lbfgs",
+      "C": 1.0,
+      "l1_ratio": 0.0,
+      "class_weight": null,
+      "fit_intercept": true,
+      "max_iter": 2000,
+      "tol": 0.0001,
+      "random_state": 42
+    }
+  },
+  "preprocessing": {
+    "name": "mask_urls",
+    "token": "zzurltokenzz",
+    "pattern": "(?<![\\w@.-])(?:https?://[^\\s<>\\\"',;]+|www\\.[a-z0-9][^\\s<>\\\"',;]*|(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:com|net|org|uk|info|biz|tv|cc|us|eu|de|in|mobi|ws|name|io)(?![\\w-]|\\.[a-z0-9])(?::[0-9]{1,5})?(?:[/?#][^\\s<>\\\"',;]*)?)",
+    "ignore_case": true,
+    "preserved_trailing_punctuation": ".!?:)]}"
+  }
+}

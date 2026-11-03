@@ -1,90 +1,117 @@
-import os
-import csv
+"""Reproduce the milestone 1 splits and attach source record identifiers."""
+
+import argparse
+import json
+from pathlib import Path
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-# 1. Load original data with QUOTE_NONE to prevent unescaped quotation marks
-# from merging lines. This ensures exactly 5,574 messages (4,827 ham, 747 spam).
-raw_path = 'data/SMSSpamCollection'
-df = pd.read_csv(raw_path, sep='\t', header=None, names=['label', 'text'], quoting=csv.QUOTE_NONE, encoding='utf-8')
-
-# Output directories: save to both 'data_splits/' and 'data/data_splits/'
-base_dirs = ['data_splits', os.path.join('data', 'data_splits')]
-
-for base_dir in base_dirs:
-    os.makedirs(os.path.join(base_dir, 'with_duplicates'), exist_ok=True)
-    os.makedirs(os.path.join(base_dir, 'no_duplicates'), exist_ok=True)
-
-# -------------------------------------------------------------
-# Split 1: WITH DUPLICATES (5,574 total: 4,827 ham, 747 spam)
-# 70% Train, 15% Val, 15% Test (stratified by label, seed=42)
-# -------------------------------------------------------------
-train_with, temp_with = train_test_split(
-    df, test_size=0.30, random_state=42, stratify=df['label']
-)
-val_with, test_with = train_test_split(
-    temp_with, test_size=0.50, random_state=42, stratify=temp_with['label']
+from sms_spam.data import (
+    RAW_DATA_PATH,
+    SPLITS_DIR,
+    DataSplits,
+    file_sha256,
+    load_raw_data,
+    validate_splits,
 )
 
-# -------------------------------------------------------------
-# Split 2: NO DUPLICATES (5,171 total: 4,518 ham, 653 spam)
-# 70% Train, 15% Val, 15% Test (stratified by label, seed=42)
-# -------------------------------------------------------------
-df_no_dup = df.drop_duplicates(subset=['text'], keep='first').reset_index(drop=True)
+SPLIT_SEED = 42
 
-train_no, temp_no = train_test_split(
-    df_no_dup, test_size=0.30, random_state=42, stratify=df_no_dup['label']
-)
-val_no, test_no = train_test_split(
-    temp_no, test_size=0.50, random_state=42, stratify=temp_no['label']
-)
 
-# Save to both directory locations
-for base_dir in base_dirs:
-    # Save with_duplicates
-    with_dir = os.path.join(base_dir, 'with_duplicates')
-    train_with.to_csv(os.path.join(with_dir, 'train.csv'), index=False)
-    val_with.to_csv(os.path.join(with_dir, 'val.csv'), index=False)
-    test_with.to_csv(os.path.join(with_dir, 'test.csv'), index=False)
+def split_records(records: pd.DataFrame) -> DataSplits:
+    train, remaining = train_test_split(
+        records, test_size=0.30, random_state=SPLIT_SEED, stratify=records["label"]
+    )
+    validation, test = train_test_split(
+        remaining, test_size=0.50, random_state=SPLIT_SEED, stratify=remaining["label"]
+    )
+    return DataSplits(*(frame.reset_index(drop=True) for frame in (train, validation, test)))
 
-    # Save no_duplicates
-    no_dir = os.path.join(base_dir, 'no_duplicates')
-    train_no.to_csv(os.path.join(no_dir, 'train.csv'), index=False)
-    val_no.to_csv(os.path.join(no_dir, 'val.csv'), index=False)
-    test_no.to_csv(os.path.join(no_dir, 'test.csv'), index=False)
 
-# ==============================================================================
-# MAIN CHECKS: CLASS COUNTS & DUPLICATES VERIFICATION
-# ==============================================================================
+def prepare_splits(
+    raw_path: str | Path = RAW_DATA_PATH,
+    output_dir: str | Path = SPLITS_DIR,
+) -> dict[str, DataSplits]:
+    """Write reproducible splits, refusing to change existing record assignments."""
+    records = load_raw_data(raw_path)
+    variants = {
+        "with_duplicates": split_records(records),
+        "no_duplicates": split_records(records.drop_duplicates(subset="text", keep="first")),
+    }
+    output_dir = Path(output_dir)
+    source_hash = file_sha256(raw_path)
+    manifest_path = output_dir / "manifest.json"
+    if manifest_path.exists():
+        existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if existing_manifest.get("dataset", {}).get("sha256") != source_hash:
+            raise ValueError(
+                "Source data changed. Use a new output directory for a new dataset version."
+            )
 
-def print_summary(name, train, val, test, total_len):
-    print(f"=== CHECK 1: CLASS DISTRIBUTION - {name} (Total: {total_len}) ===")
-    for split_name, split_df in [('Train (70%)', train), ('Val (15%)', val), ('Test (15%)', test)]:
-        counts = split_df['label'].value_counts()
-        pcts = split_df['label'].value_counts(normalize=True) * 100
-        print(f"  {split_name:12s}: Total={len(split_df):4d} | Ham={counts['ham']:4d} ({pcts['ham']:.2f}%) | Spam={counts['spam']:3d} ({pcts['spam']:.2f}%)")
-    print()
+    for variant, splits in variants.items():
+        validate_splits(splits, variant=variant)
+        for name, frame in splits.items():
+            path = output_dir / variant / f"{name}.csv"
+            if path.exists():
+                existing = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
+                columns = (
+                    list(frame.columns) if "record_id" in existing.columns else ["label", "text"]
+                )
+                matching_columns = set(columns) == set(existing.columns)
+                if not matching_columns or not existing[columns].equals(frame[columns]):
+                    raise ValueError(f"{path}: refusing to change existing records or their order.")
 
-print_summary("WITH DUPLICATES", train_with, val_with, test_with, len(df))
-print_summary("NO DUPLICATES", train_no, val_no, test_no, len(df_no_dup))
+    manifest = {
+        "schema_version": 1,
+        "dataset": {
+            "name": "SMS Spam Collection v.1",
+            "sha256": source_hash,
+            "record_count": len(records),
+            "record_id": "sms_ followed by the one-based source line number, padded to six digits",
+        },
+        "split": {
+            "seed": SPLIT_SEED,
+            "stratify": "label",
+            "fractions": {"train": 0.70, "val": 0.15, "test": 0.15},
+            "deduplication": "no_duplicates only: keep the first occurrence of each exact text",
+        },
+        "variants": {},
+    }
+    for variant, splits in variants.items():
+        manifest["variants"][variant] = {}
+        for name, frame in splits.items():
+            path = output_dir / variant / f"{name}.csv"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            frame.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+            manifest["variants"][variant][name] = {
+                "record_count": len(frame),
+                "class_counts": frame["label"].value_counts().to_dict(),
+                "sha256": file_sha256(path),
+            }
 
-print("=== CHECK 2: DUPLICATES & CROSS-SPLIT LEAKAGE ===")
-train_with_set = set(train_with['text'])
-val_with_leak = val_with['text'].isin(train_with_set).sum()
-test_with_leak = test_with['text'].isin(train_with_set).sum()
-print("WITH DUPLICATES:")
-print(f"  Internal duplicates in Train: {train_with.duplicated(subset=['text']).sum()}")
-print(f"  Internal duplicates in Val  : {val_with.duplicated(subset=['text']).sum()}")
-print(f"  Internal duplicates in Test : {test_with.duplicated(subset=['text']).sum()}")
-print(f"  Val messages leaked from Train : {val_with_leak} ({val_with_leak / len(val_with) * 100:.2f}%)")
-print(f"  Test messages leaked from Train: {test_with_leak} ({test_with_leak / len(test_with) * 100:.2f}%)")
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return variants
 
-train_no_set = set(train_no['text'])
-val_no_leak = val_no['text'].isin(train_no_set).sum()
-test_no_leak = test_no['text'].isin(train_no_set).sum()
-print("\nNO DUPLICATES:")
-print(f"  Internal duplicates in Train: {train_no.duplicated(subset=['text']).sum()}")
-print(f"  Internal duplicates in Val  : {val_no.duplicated(subset=['text']).sum()}")
-print(f"  Internal duplicates in Test : {test_no.duplicated(subset=['text']).sum()}")
-print(f"  Val messages leaked from Train : {val_no_leak} (0.00%)")
-print(f"  Test messages leaked from Train: {test_no_leak} (0.00%)")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raw-path", type=Path, default=RAW_DATA_PATH)
+    parser.add_argument("--output-dir", type=Path, default=SPLITS_DIR)
+    arguments = parser.parse_args()
+    variants = prepare_splits(arguments.raw_path, arguments.output_dir)
+    rows = [
+        {
+            "variant": variant, "split": name, "records": len(frame),
+            **frame["label"].value_counts().to_dict(),
+        }
+        for variant, splits in variants.items()
+        for name, frame in splits.items()
+    ]
+    print(pd.DataFrame(rows).to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
