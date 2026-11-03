@@ -1,4 +1,4 @@
-"""Train baselines on frozen training data and evaluate on validation data."""
+"""Train text classifiers on frozen training data and evaluate on validation data."""
 
 import argparse
 import hashlib
@@ -20,9 +20,11 @@ from sklearn.exceptions import ConvergenceWarning
 from sms_spam.config import DEFAULT_CONFIG_PATH, ExperimentConfig, load_config
 from sms_spam.data import PROJECT_ROOT, SPLITS_DIR, VARIANTS, file_sha256, load_splits
 from sms_spam.evaluation import evaluate_predictions, predict_records
-from sms_spam.models import MODEL_NAMES, BaselineModel, build_model
+from sms_spam.models import BASELINE_NAMES, MODEL_NAMES, BaselineModel, build_model
+from sms_spam.preprocessing import preprocessing_config, preprocessing_summary
 
 RESULTS_DIR = PROJECT_ROOT / "reports" / "baselines"
+PREPROCESSING_RESULTS_DIR = PROJECT_ROOT / "reports" / "preprocessing"
 
 
 @dataclass(frozen=True)
@@ -131,6 +133,7 @@ def run_experiment(
         "decision_rule": "most_frequent" if model_name == "B0" else "p_spam >= threshold",
         "decision_threshold": threshold,
         "shared_configuration": config.to_dict(),
+        "preprocessing": preprocessing_config(model_name),
     }
     metadata = {
         "run_id": run_id,
@@ -144,8 +147,12 @@ def run_experiment(
         "train_class_counts": splits.train["label"].value_counts().to_dict(),
         "validation_class_counts": splits.validation["label"].value_counts().to_dict(),
         "feature_count": (
-            len(model.named_steps["tfidf"].vocabulary_) if model_name == "B1" else None
+            len(model.named_steps["tfidf"].vocabulary_) if model_name != "B0" else None
         ),
+        "preprocessing_summary": {
+            "train": preprocessing_summary(splits.train["text"], variant=model_name),
+            "val": preprocessing_summary(splits.validation["text"], variant=model_name),
+        },
         "train_seconds": train_seconds,
         "inference_seconds": inference_seconds,
         "training_scope": "fit the complete model pipeline on training text",
@@ -184,7 +191,7 @@ def _save_result(result: ExperimentResult) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--datasets", nargs="+", choices=VARIANTS, default=list(VARIANTS))
-    parser.add_argument("--models", nargs="+", choices=MODEL_NAMES, default=list(MODEL_NAMES))
+    parser.add_argument("--models", nargs="+", choices=MODEL_NAMES, default=list(BASELINE_NAMES))
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
     parser.add_argument("--split-dir", type=Path, default=SPLITS_DIR)
     parser.add_argument("--output-dir", type=Path, default=RESULTS_DIR)
